@@ -56,6 +56,7 @@ const HomePage = () => {
         setISODay(formatToISO(tomorrow));
       }
     }
+    // eslint-disable-next-line
   }, []);
 
   const menuQuery = useQuery(['menu', ISODay], () => getMenuForADay(ISODay));
