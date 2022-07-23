@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography';
 import { MenuOrScheduleEnum } from '../../utilities/types/enums';
 import { FlexColumnFull, FlexColumn } from '../../styles/sharedStyles';
 import COLORS from '../../styles/colors';
-import { IRTLCheck } from '../../utilities/isRTL';
 
 export const StyledCard = styled(FlexColumnFull)<{ id: MenuOrScheduleEnum }>`
   background: ${({ id }) =>
