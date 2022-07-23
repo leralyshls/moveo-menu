@@ -56,7 +56,7 @@ const HomePage = () => {
         setISODay(formatToISO(tomorrow));
       }
     }
-  }, [day]);
+  }, []);
 
   const menuQuery = useQuery(['menu', ISODay], () => getMenuForADay(ISODay));
   const scheduleQuery = useQuery(['schedule', ISOWeekStart], () =>
