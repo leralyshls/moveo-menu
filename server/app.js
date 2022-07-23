@@ -2,13 +2,13 @@ import express, { urlencoded } from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
 import mongoose from 'mongoose';
-import router from './routers/index.js';
-import cronTask from './cron/scheduledTask.js';
+import router from './src/routers/index.js';
+import cronTask from './src/cron/scheduledTask.js';
 
 // dotenv
 config();
 
-const PORT = process.env.SERVER_PORT || 5000;
+const PORT = process.env.PORT || 5000;
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD
@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(urlencoded({ extended: false }));
 
 // commented for the demo
-cronTask;
+// cronTask;
 
 app.use('/api', router);
 // if you hit the route that doesn't exist

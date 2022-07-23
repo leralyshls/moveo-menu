@@ -4,9 +4,8 @@ import { nextSunday, previousSunday } from 'date-fns';
 import weeklyScheduleHandler from '../handlers/weeklyScheduleHandler.js';
 import rotate from '../utilities/rotateArr.js';
 
-// correct string for the cron job, change after demo
-// '50 23 * * 6'
-// “At 23:50 on Saturday.”
+// '0 17 * * 4'
+// “At 17:00 on Thursday.”
 
 // pass 'prev' or 'next'
 const calcSunday = (str) => {
@@ -23,8 +22,7 @@ const calcSunday = (str) => {
   return res;
 };
 
-// for the demo runs every minute
-const cronTask = cron.schedule('50 23 * * 6', async () => {
+const cronTask = cron.schedule('0 17 * * 4', async () => {
   const startWeek = calcSunday('prev');
   const schedule = await weeklyScheduleHandler.findWeeklySchedule(startWeek);
   if (!schedule) return;
@@ -35,8 +33,7 @@ const cronTask = cron.schedule('50 23 * * 6', async () => {
     orderTeams: newOrder,
     startWeek: nextWeek,
   };
-  // for the demo change even if the schedule for next week exists
-  // for the app - if exists - do not change
+
   const isUpdated = await weeklyScheduleHandler.updateWeeklySchedule(
     weeklyScheduleData
   );
@@ -44,9 +41,9 @@ const cronTask = cron.schedule('50 23 * * 6', async () => {
     await weeklyScheduleHandler.createNewWeeklySchedule(weeklyScheduleData);
   }
   const newSchedule = await weeklyScheduleHandler.findWeeklySchedule(nextWeek);
-  // for the demo - print to the console
-  console.log(newSchedule);
-  console.log('scheduler run');
+  // print to the console
+  // console.log(newSchedule);
+  // console.log('scheduler run');
 });
 
 cronTask.start();
