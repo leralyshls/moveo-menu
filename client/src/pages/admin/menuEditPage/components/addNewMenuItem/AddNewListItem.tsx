@@ -30,7 +30,6 @@ const AddNewMenuItem = ({
         dir={isRTLText.textDir}
         className='text-italic'
         autoFocus
-        multiline
         onChange={handleChange}
         value={inputValue}
         onKeyPress={(e) => handleEnterKeyPress(e, inputValue)}

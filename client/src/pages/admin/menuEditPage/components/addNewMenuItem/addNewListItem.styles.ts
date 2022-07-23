@@ -6,5 +6,4 @@ export const InputStyled = styled(Input)`
   border-radius: 0.5rem;
   border: 1px solid ${COLORS.moveoLightBlue};
   width: 90%;
-  min-height: 3.5rem;
 `;

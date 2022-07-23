@@ -126,7 +126,7 @@ const HomePage = () => {
                 src={urls[ErrorVariantsEnum.NO_MENU]}
                 alt={`${ErrorVariantsEnum.NO_MENU}`}
                 width={180}
-                style={{ borderRadius: '0.25rem' }}
+                style={{ marginBottom: '0.5rem' }}
               />
             </>
           ) : (

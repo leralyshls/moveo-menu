@@ -25,7 +25,10 @@ import {
   FlexRowFull,
   StyledMainButton,
 } from '../../../styles/sharedStyles';
-import { ScheduleUl } from './scheduleWeeklyCreate.styles';
+import {
+  ScheduleUl,
+  FinishButtonsWrapper,
+} from './scheduleWeeklyCreate.styles';
 import COLORS from '../../../styles/colors';
 import { ListContentWrapper } from '../menuEditPage/components/editableListItem/editableLi.styles';
 
@@ -37,18 +40,6 @@ export interface ITeamDuration {
   name: string;
   duration: string;
 }
-
-// const mockTeams = [
-//   'Echo',
-//   'Hotel',
-//   'Creative',
-//   'Charlie',
-//   'Boost',
-//   'Bravo',
-//   'HLS',
-//   'Skills',
-//   'Management',
-// ];
 
 const scheduleTextDir = { isRTL: false, textDir: TextDirEnum.LTR };
 
@@ -166,7 +157,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
                       >
                         <Typography>
                           {index + 1}. {item.name} - start at{' '}
-                          {timeStrings[index]} (duration {item.duration}{' '}
+                          {timeStrings[index]} (their lunch is {item.duration}{' '}
                           minutes)
                         </Typography>
                       </ListContentWrapper>
@@ -184,9 +175,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
         )}
 
         {isCanCreate && teamsQuery.status === ApiResStatusEnum.SUCCESS && (
-          <FlexRowFull
-            style={{ justifyContent: 'space-between', width: '70%' }}
-          >
+          <FinishButtonsWrapper>
             <StyledMainButton
               variant='contained'
               onClick={handleClearList}
@@ -204,7 +193,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
             >
               Save
             </StyledMainButton>
-          </FlexRowFull>
+          </FinishButtonsWrapper>
         )}
       </StyledAdminPageContainer>
     </>

@@ -36,8 +36,8 @@ export const FlexRowFull = styled.div`
 export const StyledPageContainer = styled.div`
   ${FlexColumn};
   width: 100%;
-  height: 100vh;
-  max-height: -webkit-fill-available;
+  // height: 100vh;
+  min-height: -webkit-fill-available;
   align-items: center;
   padding: 1.5rem 1rem;
 `;

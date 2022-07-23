@@ -14,10 +14,13 @@ export const ScheduleUl = styled(StyledUL)`
 
 export const FinishButtonsWrapper = styled.div`
   ${FlexRow};
-  width: 100%;
+  width: 70%;
   justify-content: space-between;
 
   @media only screen and (min-width: 500px) {
     width: 50%;
+  }
+  @media only screen and (min-width: 800px) {
+    width: 30%;
   }
 `;
