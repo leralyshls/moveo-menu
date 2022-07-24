@@ -1,6 +1,6 @@
-import { ClickAwayListener } from '@mui/material/';
-import { IRTLCheck } from '../../../../../utilities/isRTL';
-import { InputStyled } from './addNewListItem.styles';
+import { ClickAwayListener } from "@mui/material/";
+import { IRTLCheck } from "../../../../../utilities/isRTL";
+import { InputStyled } from "./addNewListItem.styles";
 
 export interface IAddNewItemProps {
   addNew: (
@@ -19,7 +19,7 @@ const AddNewMenuItem = ({
   isRTLText,
 }: IAddNewItemProps) => {
   const handleEnterKeyPress = (e: React.KeyboardEvent, value: string) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       addNew(e, value);
     }
   };
@@ -28,14 +28,14 @@ const AddNewMenuItem = ({
     <ClickAwayListener onClickAway={(e) => addNew(e, inputValue)}>
       <InputStyled
         dir={isRTLText.textDir}
-        className='text-italic'
+        className="text-italic"
         autoFocus
         onChange={handleChange}
         value={inputValue}
         onKeyPress={(e) => handleEnterKeyPress(e, inputValue)}
         disableUnderline
-        placeholder='מה בטפרית?'
-        sx={{ padding: '0.5rem' }}
+        placeholder="מה בתפריט?"
+        sx={{ padding: "0.5rem" }}
       />
     </ClickAwayListener>
   );
