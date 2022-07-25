@@ -9,13 +9,9 @@ const DailyLunchSchema = new mongoose.Schema({
   },
   menu: {
     type: [String],
-    default: undefined,
   },
   // schedule data for the specific day
-  timeSlots: [String],
-  orderTeams: {
-    type: [{ team: TeamSchema, order: Number }],
-  },
+  orderTeams: [{ type: TeamSchema }],
 });
 
 export const DailyLunch = mongoose.model('DailyLunch', DailyLunchSchema);
