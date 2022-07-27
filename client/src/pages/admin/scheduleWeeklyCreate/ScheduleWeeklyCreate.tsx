@@ -51,14 +51,6 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [timeStrings, setTimeStrings] = useState<string[]>([]);
   const teamsQuery = useQuery('teams', getAllTeams);
 
-  // useEffect(() => {
-  //   // (ref.current as HTMLDivElement).document.body.scrollTop = 0;
-  //     window.scrollTo({
-  //       top: 0,
-  //       behavior: 'smooth',
-  //   };
-  // }, [value]);
-
   const handleTimeDateChange = (newValue: DateInputType) => {
     if (scheduleTimes.length === 0 && newValue) {
       setSelectedTimeDate(newValue);
@@ -99,6 +91,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   };
 
   const handleSaveSchedule = () => {
+    console.log(teamsOrder);
     notify.success('The schedule was saved successfully');
   };
 
