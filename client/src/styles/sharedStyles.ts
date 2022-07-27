@@ -36,14 +36,19 @@ export const FlexRowFull = styled.div`
 export const StyledPageContainer = styled.div`
   ${FlexColumn};
   width: 100%;
-  // height: 100vh;
   min-height: -webkit-fill-available;
   align-items: center;
   padding: 1.5rem 1rem;
 `;
 
-export const StyledAdminPageContainer = styled(StyledPageContainer)`
-  margin-top: 16.5rem;
+export const StyledAdminPageContainer = styled.div`
+  ${FlexColumn};
+  width: 100%;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-bottom: 3.5;
 `;
 
 export const UnderscoredLinkMain = styled(Link)`
@@ -83,6 +88,8 @@ export const UppercasedTypography = styled(Typography)`
 
 export const StyledUL = styled.ul<{ isRTLText: IRTLCheck }>`
   ${FlexColumn};
+  // height: 45vh;
+  overflow-y: auto;
   align-self: ${({ isRTLText }) =>
     isRTLText.isRTL ? 'flex-end' : 'flex-start'};
   margin-block: 2rem;

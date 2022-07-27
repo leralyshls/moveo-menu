@@ -15,9 +15,10 @@ const steps = [
   },
   {
     label: 'Add teams and their lunch duration',
-    description: `Add teams in the RIGHT ORDER, and their lunch duration in minutes.
+    description: `Add teams in the CORRECT ORDER, and their lunch duration in minutes.
+      The schedule will be created for you.
       Every week teams will get the same lunch duration,
-      and next team will start their lunch after previous team finishes.`,
+      and next team will start their lunch after previous team finishes. `,
   },
   {
     label: 'Save schedule',

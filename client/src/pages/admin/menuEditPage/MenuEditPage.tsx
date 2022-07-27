@@ -20,7 +20,8 @@ import {
   StyledAdminPageContainer,
   StyledMainButton,
 } from '../../../styles/sharedStyles';
-import { MenuPageContentWrapper } from './menuEditPage.styles';
+import { FinishButtonsPaper } from '../scheduleWeeklyCreate/scheduleWeeklyCreate.styles';
+import COLORS from '../../../styles/colors';
 
 export interface IMenuEditProps {
   location: MenuOrScheduleEnum;
@@ -103,6 +104,10 @@ const MenuEdit = ({ location }: IMenuEditProps) => {
     }
   };
 
+  const handleClear = () => {
+    setMenuList([]);
+  };
+
   const handleSaveMenu = useCallback(async () => {
     if (selectedDate) {
       const params = {
@@ -134,7 +139,7 @@ const MenuEdit = ({ location }: IMenuEditProps) => {
       />
       <StyledAdminPageContainer>
         {selectedDate && (
-          <MenuPageContentWrapper shouldHaveHight={menuList.length}>
+          <>
             <AddNewMenuItem
               handleChange={handleInputChange}
               addNew={addNewMenuItem}
@@ -149,17 +154,29 @@ const MenuEdit = ({ location }: IMenuEditProps) => {
                 isRTLText={isRTLText}
               />
             )}
-          </MenuPageContentWrapper>
+          </>
         )}
         {selectedDate && (
-          <StyledMainButton
-            disabled={selectedDate ? false : true}
-            variant='contained'
-            onClick={handleSaveMenu}
-            sx={{ justifySelf: 'flex-end' }}
-          >
-            Save
-          </StyledMainButton>
+          <FinishButtonsPaper elevation={3}>
+            <StyledMainButton
+              variant='contained'
+              onClick={handleClear}
+              sx={{
+                justifySelf: 'flex-end',
+                background: `${COLORS.moveoRed} !important`,
+              }}
+            >
+              Clear
+            </StyledMainButton>
+            <StyledMainButton
+              disabled={selectedDate ? false : true}
+              variant='contained'
+              onClick={handleSaveMenu}
+              sx={{ justifySelf: 'flex-end' }}
+            >
+              Save
+            </StyledMainButton>
+          </FinishButtonsPaper>
         )}
       </StyledAdminPageContainer>
     </>
