@@ -56,11 +56,9 @@ const HomePage = () => {
   }, []);
 
   const menuQuery = useQuery(['menu', ISODay], () => getMenuForADay(ISODay));
-  const scheduleQuery = useQuery(['schedule', ISODay], () =>
-    getWeeklySchedule(ISODay)
+  const scheduleQuery = useQuery('schedule', () =>
+    getWeeklySchedule(Date.now())
   );
-  console.log(scheduleQuery);
-
   const handleAdminEnter = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const isPassword = localStorage.getItem('admin');
@@ -92,21 +90,19 @@ const HomePage = () => {
           >
             {MenuOrScheduleEnum.SCHEDULE}
           </UppercasedTypography>
-          {/* {scheduleQuery.data === ErrorVariantsEnum.NO_SCHEDULE ? (
+          {scheduleQuery.data === ErrorVariantsEnum.NO_SCHEDULE ? (
             <CenteredTypography sx={{ my: 1.5 }}>
               The schedule was not posted
             </CenteredTypography>
           ) : (
-            <StyledCardUl>
-              {scheduleQuery?.data?.data?.orderTeams.map(
-                (team: string, index: number) => (
-                  <li key={team}>
-                    {scheduleQuery?.data?.data?.timeSlots[index]} ⎻ {team}
-                  </li>
-                )
-              )}
+            <StyledCardUl dir='rtl' style={{ gap: '0.5rem' }}>
+              {scheduleQuery?.data?.data?.map((item: any) => (
+                <li key={item.name}>
+                  {item.name} – {item.time}
+                </li>
+              ))}
             </StyledCardUl>
-          )} */}
+          )}
         </StyledCard>
 
         <StyledCard id={MenuOrScheduleEnum.MENU}>
@@ -127,9 +123,7 @@ const HomePage = () => {
               />
             </>
           ) : (
-            <StyledCardUl
-              dir={isRTLCheck(menuQuery?.data?.data?.menu[0]).textDir}
-            >
+            <StyledCardUl dir='rtl'>
               {menuQuery?.data?.data?.menu.map((item: string) => (
                 <li key={item}>
                   <Typography>⎻ {item}</Typography>

@@ -9,7 +9,11 @@ const findWeeklyByIsoAndUpdate = (data) => {
 };
 
 const findWeeklyByDate = (date) => {
-  return WeeklySchedule.where('startTime').lte(date).sort('startTime').limit(1);
+  return WeeklySchedule.where('startTime')
+    .lte(date)
+    .select('-__v')
+    .sort('startTime')
+    .limit(1);
   // return WeeklySchedule.find({ isoDate: isoDate }).exec();
 };
 

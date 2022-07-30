@@ -19,14 +19,16 @@ export const postWeeklySchedule = async ({
   } else throw new Error('could not post schedule');
 };
 
-export const getWeeklySchedule = async (ISODate: string) => {
-  const params = new URLSearchParams({ date: ISODate });
+export const getWeeklySchedule = async (date: number) => {
+  const params = new URLSearchParams({ date: date.toString() });
   const res = await axios.get('/schedule', { params });
   if (res.status === 200) {
     return res.data;
   } else if (res.status === 204) {
     return ErrorVariantsEnum.NO_SCHEDULE;
-  } else throw new Error('could not fetch schedule');
+  } else {
+    throw new Error('could not fetch schedule');
+  }
 };
 
 export const getAllTeams = async () => {

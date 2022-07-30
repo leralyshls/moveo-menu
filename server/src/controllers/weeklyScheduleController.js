@@ -1,5 +1,6 @@
 import weeklyScheduleHandler from '../handlers/weeklyScheduleHandler.js';
 import { formatToISO } from '../utilities/dateFormat.js';
+import { prepareSchedule } from '../utilities/prepareSchedule.js';
 
 const requestAddOrUpdateSchedule = async (req, res) => {
   const isoDate = formatToISO(new Date(req.body.startTime));
@@ -26,13 +27,14 @@ const requestAddOrUpdateSchedule = async (req, res) => {
 };
 
 const requestFindWeeklySchedule = async (req, res) => {
-  const date = new Date(req.query.date);
+  const date = new Date(Number(req.query.date));
   try {
     const data = await weeklyScheduleHandler.findWeeklyByDate(date);
-    if (data) {
+    if (data.length > 0) {
+      const schedule = prepareSchedule(data[0]);
       res.status(200).json({
         status: 'success',
-        data: data,
+        data: schedule,
       });
     } else {
       res.status(204).json({
