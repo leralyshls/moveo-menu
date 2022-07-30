@@ -11,7 +11,7 @@ export const getTime = (date) => {
 
 const prepareTimes = (scheduleArr) => {
   return scheduleArr.map((item) => ({
-    time: getTime(item.time),
+    time: getTime(new Date(item.time)),
     name: item.name,
     duration: item.duration,
   }));
