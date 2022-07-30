@@ -51,14 +51,6 @@ const App = () => {
             }
           />
           <Route
-            path='/admin/schedule/history'
-            element={
-              <ProtectedRoute>
-                <ScheduleWeeklyCreate location={MenuOrScheduleEnum.SCHEDULE} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path='*'
             element={<NotFound variant={ErrorVariantsEnum.NOT_FOUND} />}
           />

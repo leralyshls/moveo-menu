@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import Nav from '../../../components/nav/Nav';
 import TimePicker from '../../../components/timePicker/TimePicker';
-import VerticalStepper from './components/stepper/VerticalStepper';
+import VerticalStepper, {
+  stepsNum,
+} from './components/stepper/VerticalStepper';
 import AddNewScheduleSlot from './components/addNewScheduleSlot/AddNewScheduleSlot';
 import ScheduleList from './components/scheduleList/ScheduleList';
 import { DateInputType } from '../../../utilities/types/types';
@@ -47,8 +49,8 @@ export interface ITeamDuration {
 
 const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [isStepperVisible, setIsStepperVisible] = useState<boolean>(false);
-  const [stepperActiveStep, setStepperActiveStep] = useState<number>(3);
-  const [isCanCreate, setIsCanCreate] = useState<boolean>(true);
+  const [stepperActiveStep, setStepperActiveStep] = useState<number>(0);
+  const [isCanCreate, setIsCanCreate] = useState<boolean>(false);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState<boolean>(false);
   const [selectedTimeDate, setSelectedTimeDate] = useState<DateInputType>(null);
   const [teamsOrder, setTeamsOrder] = useState<ITeamDuration[]>([]);
@@ -65,13 +67,15 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
         const res = await getWeeklySchedule(Date.now());
         if (res !== ErrorVariantsEnum.NO_SCHEDULE) {
           setExistingSchedule(res.data);
+          setIsCanCreate(true);
+          setStepperActiveStep(stepsNum);
         }
       } catch (err) {
         notify.error('Something went wrong ...');
       }
     };
     fetchSchedule();
-  }, [selectedTimeDate]);
+  }, []);
 
   const handleTimeDateChange = (newValue: DateInputType) => {
     if (scheduleTimes.length === 0 && newValue) {
@@ -152,7 +156,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
             {location}
           </UppercasedTypography>
           <Typography sx={{ textAlign: 'center', fontSize: '18px' }}>
-            When does the lunch start?
+            {selectedTimeDate ? 'Lunch start:' : 'When does the lunch start?'}
           </Typography>
           <TimePicker
             handleTimeDateChange={handleTimeDateChange}

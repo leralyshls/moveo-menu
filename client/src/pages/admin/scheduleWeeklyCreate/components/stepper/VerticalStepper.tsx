@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import { StyledMainButton } from '../../../../../styles/sharedStyles';
 import COLORS from '../../../../../styles/colors';
 
+export const stepsNum = 3;
+
 const steps = [
   {
     label: 'Nice! You selected the lunch start time',
@@ -105,6 +107,7 @@ const VerticalStepper = ({
         variant='contained'
         onClick={handleFinish}
         disabled={activeStep !== 2}
+        style={{ marginLeft: '13.5rem' }}
       >
         Finish
       </StyledMainButton>
