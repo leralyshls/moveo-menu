@@ -1,7 +1,6 @@
 import axios from '../axios/config';
 import { ITeam } from '../utilities/types/apiResponseTypes';
 import { ITeamDuration } from '../pages/admin/scheduleWeeklyCreate/ScheduleWeeklyCreate';
-import { formatToISO } from '../utilities/dateHelpers';
 import { ErrorVariantsEnum } from '../utilities/types/enums';
 
 export interface WeeklyScheduleParams {

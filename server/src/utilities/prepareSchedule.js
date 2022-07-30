@@ -13,6 +13,7 @@ const prepareTimes = (scheduleArr) => {
   return scheduleArr.map((item) => ({
     time: getTime(item.time),
     name: item.name,
+    duration: item.duration,
   }));
 };
 
@@ -28,7 +29,11 @@ export const prepareSchedule = (data) => {
         data.orderTeams[index - 1].duration
       );
     }
-    scheduleArr.push({ name: item.name, time: newDate });
+    scheduleArr.push({
+      name: item.name,
+      time: newDate,
+      duration: item.duration,
+    });
   });
   return prepareTimes(scheduleArr);
 };

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
@@ -8,15 +8,18 @@ import VerticalStepper from './components/stepper/VerticalStepper';
 import AddNewScheduleSlot from './components/addNewScheduleSlot/AddNewScheduleSlot';
 import ScheduleList from './components/scheduleList/ScheduleList';
 import { DateInputType } from '../../../utilities/types/types';
+import { IApiSchedule } from '../../../utilities/types/apiResponseTypes';
 import {
   getAllTeams,
   postWeeklySchedule,
+  getWeeklySchedule,
 } from '../../../services/scheduleService';
 import { isDuplicateTeam } from '../../../utilities/isDuplicateTeam';
 import { notify } from '../../../utilities/notifyWithToast';
 import {
   ApiResStatusEnum,
   MenuOrScheduleEnum,
+  ErrorVariantsEnum,
 } from '../../../utilities/types/enums';
 import { addMinutes } from 'date-fns';
 import { getTime } from '../../../utilities/dateHelpers';
@@ -30,6 +33,7 @@ import {
   StyledMainButton,
 } from '../../../styles/sharedStyles';
 import { FinishButtonsPaper } from './scheduleWeeklyCreate.styles';
+import { StyledExplanation } from './components/addNewScheduleSlot/addNewScheduleSlot.styles';
 import COLORS from '../../../styles/colors';
 
 export interface IScheduleWeeklyCreate {
@@ -50,9 +54,24 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [teamsOrder, setTeamsOrder] = useState<ITeamDuration[]>([]);
   const [scheduleTimes, setScheduleTimes] = useState<Date[]>([]);
   const [timeStrings, setTimeStrings] = useState<string[]>([]);
+  const [existingSchedule, setExistingSchedule] = useState<IApiSchedule[]>([]);
 
   const teamsQuery = useQuery('teams', getAllTeams);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const res = await getWeeklySchedule(Date.now());
+        if (res !== ErrorVariantsEnum.NO_SCHEDULE) {
+          setExistingSchedule(res.data);
+        }
+      } catch (err) {
+        notify.error('Something went wrong ...');
+      }
+    };
+    fetchSchedule();
+  }, [selectedTimeDate]);
 
   const handleTimeDateChange = (newValue: DateInputType) => {
     if (scheduleTimes.length === 0 && newValue) {
@@ -99,6 +118,16 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
     setTimeStrings([]);
   };
 
+  const handleDeleteExistingSchedule = () => {
+    setExistingSchedule([]);
+    notify.success('The schedule was deleted successfully');
+  };
+
+  const handleAddNew = () => {
+    setExistingSchedule([]);
+    notify.default('🕐 Pick start time and add teams and duration');
+  };
+
   const handleSaveSchedule = useCallback(async () => {
     if (selectedTimeDate) {
       const params = {
@@ -106,14 +135,14 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
         orderTeams: teamsOrder,
       };
       try {
-        const res = await postWeeklySchedule(params);
+        await postWeeklySchedule(params);
         notify.success('The schedule was saved successfully');
         navigate('/admin');
       } catch (e) {
         notify.error('Oops, something went wrong');
       }
     }
-  }, [teamsOrder, selectedTimeDate]);
+  }, [teamsOrder, selectedTimeDate, navigate]);
 
   return (
     <>
@@ -165,6 +194,25 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
                   teamsOrder={teamsOrder}
                   timeStrings={timeStrings}
                 />
+                <FinishButtonsPaper elevation={3}>
+                  <StyledMainButton
+                    variant='contained'
+                    onClick={handleClearList}
+                    sx={{
+                      justifySelf: 'flex-end',
+                      background: `${COLORS.moveoRed} !important`,
+                    }}
+                  >
+                    Clear
+                  </StyledMainButton>
+                  <StyledMainButton
+                    variant='contained'
+                    onClick={handleSaveSchedule}
+                    sx={{ justifySelf: 'flex-end' }}
+                  >
+                    Save
+                  </StyledMainButton>
+                </FinishButtonsPaper>
               </>
             )}
             {teamsQuery.status === ApiResStatusEnum.ERROR && (
@@ -175,27 +223,33 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
           </FlexColumnFull>
         )}
 
-        {isCanCreate && teamsQuery.status === ApiResStatusEnum.SUCCESS && (
-          <FinishButtonsPaper elevation={3}>
-            <StyledMainButton
-              variant='contained'
-              onClick={handleClearList}
-              sx={{
-                justifySelf: 'flex-end',
-                background: `${COLORS.moveoRed} !important`,
-              }}
-            >
-              Clear
-            </StyledMainButton>
-            <StyledMainButton
-              variant='contained'
-              onClick={handleSaveSchedule}
-              sx={{ justifySelf: 'flex-end' }}
-            >
-              Save
-            </StyledMainButton>
-          </FinishButtonsPaper>
-        )}
+        {teamsQuery.status === ApiResStatusEnum.SUCCESS &&
+          existingSchedule.length > 0 &&
+          !selectedTimeDate && (
+            <>
+              <StyledExplanation>This week's schedule:</StyledExplanation>
+              <ScheduleList existingSchedule={existingSchedule} />
+              <FinishButtonsPaper elevation={3}>
+                <StyledMainButton
+                  variant='contained'
+                  onClick={handleDeleteExistingSchedule}
+                  sx={{
+                    justifySelf: 'flex-end',
+                    background: `${COLORS.moveoRed} !important`,
+                  }}
+                >
+                  Delete
+                </StyledMainButton>
+                <StyledMainButton
+                  variant='contained'
+                  onClick={handleAddNew}
+                  sx={{ justifySelf: 'flex-end' }}
+                >
+                  Add New
+                </StyledMainButton>
+              </FinishButtonsPaper>
+            </>
+          )}
       </StyledAdminPageContainer>
     </>
   );

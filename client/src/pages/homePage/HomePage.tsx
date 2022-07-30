@@ -2,7 +2,6 @@ import { useEffect, useState, MouseEvent } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { getHours } from 'date-fns';
-import startOfWeek from 'date-fns/startOfWeek';
 import Typography from '@mui/material/Typography';
 import Logo from '../../components/logo/Logo';
 import { getMenuForADay } from '../../services/menuService';
@@ -14,7 +13,7 @@ import {
 } from '../../utilities/dateHelpers';
 import { addDays, nextSunday } from 'date-fns';
 import { urls } from '../../components/notFound/notFound.utils';
-import { isRTLCheck } from '../../utilities/isRTL';
+import { separateListWithComa } from '../../utilities/separateListWithComa';
 
 import {
   MenuOrScheduleEnum,
@@ -86,19 +85,19 @@ const HomePage = () => {
         <StyledCard id={MenuOrScheduleEnum.SCHEDULE}>
           <UppercasedTypography
             variant='h6'
-            sx={{ color: `${COLORS.moveoRed}`, fontWeight: '600' }}
+            sx={{ color: `${COLORS.moveoRed}`, fontWeight: '600', mb: 0.5 }}
           >
             {MenuOrScheduleEnum.SCHEDULE}
           </UppercasedTypography>
           {scheduleQuery.data === ErrorVariantsEnum.NO_SCHEDULE ? (
-            <CenteredTypography sx={{ my: 1.5 }}>
+            <CenteredTypography sx={{ mt: 1.5 }}>
               The schedule was not posted
             </CenteredTypography>
           ) : (
             <StyledCardUl dir='rtl' style={{ gap: '0.5rem' }}>
               {scheduleQuery?.data?.data?.map((item: any) => (
                 <li key={item.name}>
-                  {item.name} – {item.time}
+                  {separateListWithComa(item.name)} – {item.time}
                 </li>
               ))}
             </StyledCardUl>
