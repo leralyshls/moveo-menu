@@ -38,7 +38,7 @@ const cronTask = cron.schedule('0 17 * * 4', async () => {
     weeklyScheduleData
   );
   if (!isUpdated) {
-    await weeklyScheduleHandler.createNewWeeklySchedule(weeklyScheduleData);
+    await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
   }
   const newSchedule = await weeklyScheduleHandler.findWeeklySchedule(nextWeek);
   // print to the console

@@ -1,13 +1,15 @@
 import weeklyScheduleHandler from '../handlers/weeklyScheduleHandler.js';
+import { formatToISO } from '../utilities/dateFormat.js';
 
 const requestAddOrUpdateSchedule = async (req, res) => {
+  const isoDate = formatToISO(new Date(req.body.startTime));
   const weeklyScheduleData = {
     startTime: req.body.startTime,
     orderTeams: req.body.orderTeams,
+    isoDate,
   };
-  console.log(weeklyScheduleData);
   try {
-    await weeklyScheduleHandler.createNewWeeklySchedule(weeklyScheduleData);
+    await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
     res.status(200).json({
       status: 'success',
     });
@@ -16,20 +18,12 @@ const requestAddOrUpdateSchedule = async (req, res) => {
       status: 'fail',
     });
   }
-  // const timeSlots = req.body.timeSlots.split(',');
-  // const orderTeams = req.body.orderTeams.split(',');
-  // const startWeek = new Date(req.body.startWeek);
-  // const weeklyScheduleData = {
-  //   timeSlots,
-  //   orderTeams,
-  //   startWeek,
-  // };
   // try {
   //   const isUpdated = await weeklyScheduleHandler.updateWeeklySchedule(
   //     weeklyScheduleData
   //   );
   //   if (!isUpdated) {
-  //     await weeklyScheduleHandler.createNewWeeklySchedule(weeklyScheduleData);
+  //     await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
   //   }
   //   res.status(200).json({
   //     status: 'success',
