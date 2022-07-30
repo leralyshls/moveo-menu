@@ -11,6 +11,7 @@ const DailyLunchSchema = new mongoose.Schema({
     type: [String],
   },
   // schedule data for the specific day
+  startTime: Date,
   orderTeams: [{ type: TeamSchema }],
 });
 

@@ -1,25 +1,20 @@
 import axios from '../axios/config';
 import { ITeam } from '../utilities/types/apiResponseTypes';
+import { ITeamDuration } from '../pages/admin/scheduleWeeklyCreate/ScheduleWeeklyCreate';
 import { formatToISO } from '../utilities/dateHelpers';
 import { ErrorVariantsEnum } from '../utilities/types/enums';
 
 export interface WeeklyScheduleParams {
-  startWeek: Date;
-  orderTeams: string[];
-  timeSlots: string[];
+  startTime: Date;
+  orderTeams: ITeamDuration[];
 }
 
 export const postWeeklySchedule = async ({
-  startWeek,
+  startTime,
   orderTeams,
-  timeSlots,
 }: WeeklyScheduleParams) => {
-  const params = {
-    startWeek: formatToISO(startWeek),
-    orderTeams: orderTeams.join(','),
-    timeSlots: timeSlots.join(','),
-  };
-  const res = await axios.post('/schedule', params);
+  console.log(startTime, orderTeams);
+  const res = await axios.post('/schedule', { startTime, orderTeams });
   if (res.status === 200) {
     return res.data;
   } else throw new Error('could not post schedule');

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { Typography } from '@mui/material';
 import Nav from '../../../components/nav/Nav';
@@ -7,7 +7,10 @@ import VerticalStepper from './components/stepper/VerticalStepper';
 import AddNewScheduleSlot from './components/addNewScheduleSlot/AddNewScheduleSlot';
 import ScheduleList from './components/scheduleList/ScheduleList';
 import { DateInputType } from '../../../utilities/types/types';
-import { getAllTeams } from '../../../services/scheduleService';
+import {
+  getAllTeams,
+  postWeeklySchedule,
+} from '../../../services/scheduleService';
 import { isDuplicateTeam } from '../../../utilities/isDuplicateTeam';
 import { notify } from '../../../utilities/notifyWithToast';
 import {
@@ -39,8 +42,8 @@ export interface ITeamDuration {
 
 const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [isStepperVisible, setIsStepperVisible] = useState<boolean>(false);
-  const [stepperActiveStep, setStepperActiveStep] = useState<number>(0);
-  const [isCanCreate, setIsCanCreate] = useState<boolean>(false);
+  const [stepperActiveStep, setStepperActiveStep] = useState<number>(3);
+  const [isCanCreate, setIsCanCreate] = useState<boolean>(true);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState<boolean>(false);
   const [selectedTimeDate, setSelectedTimeDate] = useState<DateInputType>(null);
   const [teamsOrder, setTeamsOrder] = useState<ITeamDuration[]>([]);
@@ -87,16 +90,26 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
     }
   };
 
-  const handleSaveSchedule = () => {
-    console.log(teamsOrder);
-    notify.success('The schedule was saved successfully');
-  };
-
   const handleClearList = () => {
     setTeamsOrder([]);
     setScheduleTimes([]);
     setTimeStrings([]);
   };
+
+  const handleSaveSchedule = useCallback(async () => {
+    if (selectedTimeDate) {
+      const params = {
+        startTime: selectedTimeDate,
+        orderTeams: teamsOrder,
+      };
+      try {
+        const res = await postWeeklySchedule(params);
+        notify.success('The schedule was saved successfully');
+      } catch (e) {
+        notify.error('Oops, something went wrong');
+      }
+    }
+  }, [teamsOrder, selectedTimeDate]);
 
   return (
     <>
