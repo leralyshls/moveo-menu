@@ -8,23 +8,8 @@ const requestAddOrUpdateSchedule = async (req, res) => {
     orderTeams: req.body.orderTeams,
     isoDate,
   };
-  try {
-    await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
-    res.status(200).json({
-      status: 'success',
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-    });
-  }
   // try {
-  //   const isUpdated = await weeklyScheduleHandler.updateWeeklySchedule(
-  //     weeklyScheduleData
-  //   );
-  //   if (!isUpdated) {
-  //     await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
-  //   }
+  //   await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
   //   res.status(200).json({
   //     status: 'success',
   //   });
@@ -33,6 +18,21 @@ const requestAddOrUpdateSchedule = async (req, res) => {
   //     status: 'fail',
   //   });
   // }
+  try {
+    const isUpdated = await weeklyScheduleHandler.findWeeklyByIsoAndUpdate(
+      weeklyScheduleData
+    );
+    if (!isUpdated) {
+      await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
+    }
+    res.status(200).json({
+      status: 'success',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+    });
+  }
 };
 
 // const requestFindWeeklySchedule = async (req, res) => {
