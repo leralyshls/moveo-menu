@@ -1,26 +1,31 @@
 import { WeeklySchedule } from '../models/weeklyScheduleModel.js';
 
-const createNewWeeklySchedule = (scheduleData) => {
+const createNewWeekly = (scheduleData) => {
   return WeeklySchedule.create(scheduleData);
 };
 
-const updateWeeklySchedule = (data) => {
-  return WeeklySchedule.findOneAndUpdate({ startWeek: data.startWeek }, data);
+const findWeeklyByIsoAndUpdate = (data) => {
+  return WeeklySchedule.findOneAndUpdate({ isoDate: data.isoDate }, data);
 };
 
-const findWeeklySchedule = (startWeek) => {
-  return WeeklySchedule.findOne({ startWeek }).exec();
+const findWeeklyByDate = (date) => {
+  return WeeklySchedule.where('startTime')
+    .lte(date)
+    .select('-__v')
+    .sort('startTime')
+    .limit(1);
+  // return WeeklySchedule.find({ isoDate: isoDate }).exec();
 };
 
-const deleteWeeklySchedule = (startWeek) => {
-  return WeeklySchedule.findOneAndDelete({ startWeek });
+const deleteWeeklyByIso = (isoDate) => {
+  return WeeklySchedule.findOneAndDelete({ isoDate });
 };
 
 const weeklyScheduleHandler = {
-  createNewWeeklySchedule,
-  updateWeeklySchedule,
-  findWeeklySchedule,
-  deleteWeeklySchedule,
+  createNewWeekly,
+  findWeeklyByDate,
+  findWeeklyByIsoAndUpdate,
+  deleteWeeklyByIso,
 };
 
 export default weeklyScheduleHandler;

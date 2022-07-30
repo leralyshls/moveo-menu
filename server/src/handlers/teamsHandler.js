@@ -1,7 +1,7 @@
 import { Team } from '../models/teamModel.js';
 
 const getAllTeams = () => {
-  return Team.find().select('-__v');
+  return Team.find().select('-__v').sort({ name: 'asc' });
 };
 
 const createNewTeam = (teamData) => {

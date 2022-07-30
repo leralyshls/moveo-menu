@@ -19,7 +19,7 @@ export interface IAdminNavWithDate extends IDatePickerProps {
 const Nav = ({ location, children }: INavProps) => {
   const isEditMenuPage = location === MenuOrScheduleEnum.MENU ? true : false;
   return (
-    <StyledAppBar location={location}>
+    <StyledAppBar location={location} position='static'>
       <FlexRowFull style={{ justifyContent: 'space-between' }}>
         <Link to='/'>
           <HomeRoundedIcon />
@@ -31,7 +31,6 @@ const Nav = ({ location, children }: INavProps) => {
           >
             Edit {MenuOrScheduleEnum.SCHEDULE}
             <ScheduleRoundedIcon fontSize='small' />
-            {/* <ArrowForwardIosRoundedIcon fontSize='small' /> */}
           </StyledNavLinkLight>
         ) : (
           <StyledNavLinkLight
@@ -40,7 +39,6 @@ const Nav = ({ location, children }: INavProps) => {
           >
             Edit {MenuOrScheduleEnum.MENU}
             <RestaurantMenuRoundedIcon fontSize='small' />
-            {/* <ArrowForwardIosRoundedIcon fontSize='small' /> */}
           </StyledNavLinkLight>
         )}
       </FlexRowFull>

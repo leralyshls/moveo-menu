@@ -1,5 +1,7 @@
 import styled from 'styled-components';
-import { FlexColumn } from '../../../styles/sharedStyles';
+import { Paper } from '@mui/material';
+import { FlexColumn, FlexRow } from '../../../styles/sharedStyles';
+import COLORS from '../../../styles/colors';
 
 export const MenuPageContentWrapper = styled.div<{ shouldHaveHight: number }>`
   ${FlexColumn};

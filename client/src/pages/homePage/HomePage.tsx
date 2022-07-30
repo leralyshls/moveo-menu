@@ -2,7 +2,6 @@ import { useEffect, useState, MouseEvent } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { getHours } from 'date-fns';
-import startOfWeek from 'date-fns/startOfWeek';
 import Typography from '@mui/material/Typography';
 import Logo from '../../components/logo/Logo';
 import { getMenuForADay } from '../../services/menuService';
@@ -14,7 +13,7 @@ import {
 } from '../../utilities/dateHelpers';
 import { addDays, nextSunday } from 'date-fns';
 import { urls } from '../../components/notFound/notFound.utils';
-import { isRTLCheck } from '../../utilities/isRTL';
+import { separateListWithComa } from '../../utilities/separateListWithComa';
 
 import {
   MenuOrScheduleEnum,
@@ -39,31 +38,26 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  const weekStart = startOfWeek(day);
-  const ISOWeekStart = formatToISO(weekStart);
-
   // get menu for today in the morning, for tomorrow in the evening, on the weekend - the menu for sunday
   useEffect(() => {
-    if (isWeekend(day)) {
-      const sunday = nextSunday(day);
+    const sunday = nextSunday(day);
+    const hour = getHours(day);
+    const tomorrow = addDays(day, 1);
+
+    if (isWeekend(day) || (hour >= 15 && isWeekend(tomorrow))) {
       setDay(sunday);
       setISODay(formatToISO(sunday));
-    } else {
-      const hour = getHours(day);
-      if (hour >= 15) {
-        const tomorrow = addDays(day, 1);
-        setDay(tomorrow);
-        setISODay(formatToISO(tomorrow));
-      }
+    } else if (hour >= 15 && !isWeekend(tomorrow)) {
+      setDay(tomorrow);
+      setISODay(formatToISO(tomorrow));
     }
     // eslint-disable-next-line
   }, []);
 
   const menuQuery = useQuery(['menu', ISODay], () => getMenuForADay(ISODay));
-  const scheduleQuery = useQuery(['schedule', ISOWeekStart], () =>
-    getWeeklySchedule(ISOWeekStart)
+  const scheduleQuery = useQuery('schedule', () =>
+    getWeeklySchedule(Date.now())
   );
-
   const handleAdminEnter = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const isPassword = localStorage.getItem('admin');
@@ -91,23 +85,21 @@ const HomePage = () => {
         <StyledCard id={MenuOrScheduleEnum.SCHEDULE}>
           <UppercasedTypography
             variant='h6'
-            sx={{ color: `${COLORS.moveoRed}`, fontWeight: '600' }}
+            sx={{ color: `${COLORS.moveoRed}`, fontWeight: '600', mb: 0.5 }}
           >
             {MenuOrScheduleEnum.SCHEDULE}
           </UppercasedTypography>
           {scheduleQuery.data === ErrorVariantsEnum.NO_SCHEDULE ? (
-            <CenteredTypography sx={{ my: 1.5 }}>
+            <CenteredTypography sx={{ mt: 1.5 }}>
               The schedule was not posted
             </CenteredTypography>
           ) : (
-            <StyledCardUl>
-              {scheduleQuery?.data?.data?.orderTeams.map(
-                (team: string, index: number) => (
-                  <li key={team}>
-                    {scheduleQuery?.data?.data?.timeSlots[index]} ⎻ {team}
-                  </li>
-                )
-              )}
+            <StyledCardUl dir='rtl' style={{ gap: '0.5rem' }}>
+              {scheduleQuery?.data?.data?.map((item: any) => (
+                <li key={item.name}>
+                  {separateListWithComa(item.name)} – {item.time}
+                </li>
+              ))}
             </StyledCardUl>
           )}
         </StyledCard>
@@ -130,9 +122,7 @@ const HomePage = () => {
               />
             </>
           ) : (
-            <StyledCardUl
-              dir={isRTLCheck(menuQuery?.data?.data?.menu[0]).textDir}
-            >
+            <StyledCardUl dir='rtl'>
               {menuQuery?.data?.data?.menu.map((item: string) => (
                 <li key={item}>
                   <Typography>⎻ {item}</Typography>

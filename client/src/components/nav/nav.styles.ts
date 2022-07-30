@@ -13,9 +13,9 @@ export const StyledAppBar = styled(AppBar)<{ location: MenuOrScheduleEnum }>`
       : COLORS.moveoRed} !important;
   justify-content: space-between;
   align-items: center;
-  height: 35%;
+  height: 240px;
   padding: 1.5rem 1.5rem 2rem;
-  color: ${COLORS.moveoWhite};
+  color: ${COLORS.moveoWhite};,
 `;
 
 export const StyledScheduleIcon = styled(ScheduleIcon)`

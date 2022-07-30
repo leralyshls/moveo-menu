@@ -1,21 +1,28 @@
-import { useState } from "react";
-import { useQuery } from "react-query";
-import { Typography } from "@mui/material";
-import Nav from "../../../components/nav/Nav";
-import TimePicker from "../../../components/timePicker/TimePicker";
-import VerticalStepper from "./components/stepper/VerticalStepper";
-import AddNewScheduleSlot from "./components/addNewScheduleSlot/AddNewScheduleSlot";
-import { DateInputType } from "../../../utilities/types/types";
-import { getAllTeams } from "../../../services/scheduleService";
-import { isDuplicateTeam } from "../../../utilities/isDuplicateTeam";
-import { notify } from "../../../utilities/notifyWithToast";
+import { useState, useCallback, useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
+import Nav from '../../../components/nav/Nav';
+import TimePicker from '../../../components/timePicker/TimePicker';
+import VerticalStepper from './components/stepper/VerticalStepper';
+import AddNewScheduleSlot from './components/addNewScheduleSlot/AddNewScheduleSlot';
+import ScheduleList from './components/scheduleList/ScheduleList';
+import { DateInputType } from '../../../utilities/types/types';
+import { IApiSchedule } from '../../../utilities/types/apiResponseTypes';
+import {
+  getAllTeams,
+  postWeeklySchedule,
+  getWeeklySchedule,
+} from '../../../services/scheduleService';
+import { isDuplicateTeam } from '../../../utilities/isDuplicateTeam';
+import { notify } from '../../../utilities/notifyWithToast';
 import {
   ApiResStatusEnum,
   MenuOrScheduleEnum,
-  TextDirEnum,
-} from "../../../utilities/types/enums";
-import { addMinutes } from "date-fns";
-import { getTime } from "../../../utilities/dateHelpers";
+  ErrorVariantsEnum,
+} from '../../../utilities/types/enums';
+import { addMinutes } from 'date-fns';
+import { getTime } from '../../../utilities/dateHelpers';
 
 import {
   NavBarContentWrapper,
@@ -24,13 +31,10 @@ import {
   FlexColumnFull,
   FlexRowFull,
   StyledMainButton,
-} from "../../../styles/sharedStyles";
-import {
-  ScheduleUl,
-  FinishButtonsWrapper,
-} from "./scheduleWeeklyCreate.styles";
-import COLORS from "../../../styles/colors";
-import { ListContentWrapper } from "../menuEditPage/components/editableListItem/editableLi.styles";
+} from '../../../styles/sharedStyles';
+import { FinishButtonsPaper } from './scheduleWeeklyCreate.styles';
+import { StyledExplanation } from './components/addNewScheduleSlot/addNewScheduleSlot.styles';
+import COLORS from '../../../styles/colors';
 
 export interface IScheduleWeeklyCreate {
   location: MenuOrScheduleEnum;
@@ -41,18 +45,33 @@ export interface ITeamDuration {
   duration: string;
 }
 
-const scheduleTextDir = { isRTL: false, textDir: TextDirEnum.LTR };
-
 const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [isStepperVisible, setIsStepperVisible] = useState<boolean>(false);
-  const [stepperActiveStep, setStepperActiveStep] = useState<number>(0);
-  const [isCanCreate, setIsCanCreate] = useState<boolean>(false);
+  const [stepperActiveStep, setStepperActiveStep] = useState<number>(3);
+  const [isCanCreate, setIsCanCreate] = useState<boolean>(true);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState<boolean>(false);
   const [selectedTimeDate, setSelectedTimeDate] = useState<DateInputType>(null);
   const [teamsOrder, setTeamsOrder] = useState<ITeamDuration[]>([]);
   const [scheduleTimes, setScheduleTimes] = useState<Date[]>([]);
   const [timeStrings, setTimeStrings] = useState<string[]>([]);
-  const teamsQuery = useQuery("teams", getAllTeams);
+  const [existingSchedule, setExistingSchedule] = useState<IApiSchedule[]>([]);
+
+  const teamsQuery = useQuery('teams', getAllTeams);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const res = await getWeeklySchedule(Date.now());
+        if (res !== ErrorVariantsEnum.NO_SCHEDULE) {
+          setExistingSchedule(res.data);
+        }
+      } catch (err) {
+        notify.error('Something went wrong ...');
+      }
+    };
+    fetchSchedule();
+  }, [selectedTimeDate]);
 
   const handleTimeDateChange = (newValue: DateInputType) => {
     if (scheduleTimes.length === 0 && newValue) {
@@ -70,7 +89,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
 
   const handleAddTimeSlot = (duration: string, teams: string) => {
     if (isDuplicateTeam(teams, teamsOrder)) {
-      notify.error("Duplicate team, try again");
+      notify.error('Duplicate team, try again');
       return;
     }
     setTeamsOrder((teamsOrder) => [...teamsOrder, { name: teams, duration }]);
@@ -93,24 +112,46 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
     }
   };
 
-  const handleSaveSchedule = () => {
-    notify.success("The schedule was saved successfully");
-  };
-
   const handleClearList = () => {
     setTeamsOrder([]);
     setScheduleTimes([]);
     setTimeStrings([]);
   };
 
+  const handleDeleteExistingSchedule = () => {
+    setExistingSchedule([]);
+    notify.success('The schedule was deleted successfully');
+  };
+
+  const handleAddNew = () => {
+    setExistingSchedule([]);
+    notify.default('🕐 Pick start time and add teams and duration');
+  };
+
+  const handleSaveSchedule = useCallback(async () => {
+    if (selectedTimeDate) {
+      const params = {
+        startTime: selectedTimeDate,
+        orderTeams: teamsOrder,
+      };
+      try {
+        await postWeeklySchedule(params);
+        notify.success('The schedule was saved successfully');
+        navigate('/admin');
+      } catch (e) {
+        notify.error('Oops, something went wrong');
+      }
+    }
+  }, [teamsOrder, selectedTimeDate, navigate]);
+
   return (
     <>
       <Nav location={location}>
         <NavBarContentWrapper>
-          <UppercasedTypography variant="h5" sx={{ fontWeight: 600 }}>
+          <UppercasedTypography variant='h5' sx={{ fontWeight: 600 }}>
             {location}
           </UppercasedTypography>
-          <Typography sx={{ textAlign: "center", fontSize: "18px" }}>
+          <Typography sx={{ textAlign: 'center', fontSize: '18px' }}>
             When does the lunch start?
           </Typography>
           <TimePicker
@@ -128,8 +169,8 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
           <FlexColumnFull>
             <FlexRowFull
               style={{
-                marginBottom: "1.5rem",
-                justifyContent: "center",
+                marginBottom: '1.5rem',
+                justifyContent: 'center',
               }}
             >
               {isStepperVisible && stepperActiveStep !== 3 && (
@@ -149,53 +190,66 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
                   handleAddTimeSlot={handleAddTimeSlot}
                   handleAddTime={handleAddTime}
                 />
-                <ScheduleUl isRTLText={scheduleTextDir}>
-                  {teamsOrder.map((item, index) => (
-                    <li key={item.name}>
-                      <ListContentWrapper
-                        isRTLText={scheduleTextDir}
-                        style={{ justifyContent: "space-between" }}
-                      >
-                        <Typography>
-                          {index + 1}. {item.name} - start at{" "}
-                          {timeStrings[index]} (their lunch is {item.duration}{" "}
-                          minutes)
-                        </Typography>
-                      </ListContentWrapper>
-                    </li>
-                  ))}
-                </ScheduleUl>
+                <ScheduleList
+                  teamsOrder={teamsOrder}
+                  timeStrings={timeStrings}
+                />
+                <FinishButtonsPaper elevation={3}>
+                  <StyledMainButton
+                    variant='contained'
+                    onClick={handleClearList}
+                    sx={{
+                      justifySelf: 'flex-end',
+                      background: `${COLORS.moveoRed} !important`,
+                    }}
+                  >
+                    Clear
+                  </StyledMainButton>
+                  <StyledMainButton
+                    variant='contained'
+                    onClick={handleSaveSchedule}
+                    sx={{ justifySelf: 'flex-end' }}
+                  >
+                    Save
+                  </StyledMainButton>
+                </FinishButtonsPaper>
               </>
             )}
             {teamsQuery.status === ApiResStatusEnum.ERROR && (
-              <Typography variant="body1" sx={{ textAlign: "center" }}>
+              <Typography variant='body1' sx={{ textAlign: 'center' }}>
                 Sorry, something went wrong, try again later
               </Typography>
             )}
           </FlexColumnFull>
         )}
 
-        {isCanCreate && teamsQuery.status === ApiResStatusEnum.SUCCESS && (
-          <FinishButtonsWrapper>
-            <StyledMainButton
-              variant="contained"
-              onClick={handleClearList}
-              sx={{
-                justifySelf: "flex-end",
-                background: `${COLORS.moveoRed} !important`,
-              }}
-            >
-              Clear
-            </StyledMainButton>
-            <StyledMainButton
-              variant="contained"
-              onClick={handleSaveSchedule}
-              sx={{ justifySelf: "flex-end" }}
-            >
-              Save
-            </StyledMainButton>
-          </FinishButtonsWrapper>
-        )}
+        {teamsQuery.status === ApiResStatusEnum.SUCCESS &&
+          existingSchedule.length > 0 &&
+          !selectedTimeDate && (
+            <>
+              <StyledExplanation>This week's schedule:</StyledExplanation>
+              <ScheduleList existingSchedule={existingSchedule} />
+              <FinishButtonsPaper elevation={3}>
+                <StyledMainButton
+                  variant='contained'
+                  onClick={handleDeleteExistingSchedule}
+                  sx={{
+                    justifySelf: 'flex-end',
+                    background: `${COLORS.moveoRed} !important`,
+                  }}
+                >
+                  Delete
+                </StyledMainButton>
+                <StyledMainButton
+                  variant='contained'
+                  onClick={handleAddNew}
+                  sx={{ justifySelf: 'flex-end' }}
+                >
+                  Add New
+                </StyledMainButton>
+              </FinishButtonsPaper>
+            </>
+          )}
       </StyledAdminPageContainer>
     </>
   );

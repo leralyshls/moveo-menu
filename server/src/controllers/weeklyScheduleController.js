@@ -1,20 +1,20 @@
 import weeklyScheduleHandler from '../handlers/weeklyScheduleHandler.js';
+import { formatToISO } from '../utilities/dateFormat.js';
+import { prepareSchedule } from '../utilities/prepareSchedule.js';
 
 const requestAddOrUpdateSchedule = async (req, res) => {
-  const timeSlots = req.body.timeSlots.split(',');
-  const orderTeams = req.body.orderTeams.split(',');
-  const startWeek = new Date(req.body.startWeek);
+  const isoDate = formatToISO(new Date(req.body.startTime));
   const weeklyScheduleData = {
-    timeSlots,
-    orderTeams,
-    startWeek,
+    startTime: req.body.startTime,
+    orderTeams: req.body.orderTeams,
+    isoDate,
   };
   try {
-    const isUpdated = await weeklyScheduleHandler.updateWeeklySchedule(
+    const isUpdated = await weeklyScheduleHandler.findWeeklyByIsoAndUpdate(
       weeklyScheduleData
     );
     if (!isUpdated) {
-      await weeklyScheduleHandler.createNewWeeklySchedule(weeklyScheduleData);
+      await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
     }
     res.status(200).json({
       status: 'success',
@@ -27,13 +27,14 @@ const requestAddOrUpdateSchedule = async (req, res) => {
 };
 
 const requestFindWeeklySchedule = async (req, res) => {
-  const date = new Date(req.query.date);
+  const date = new Date(Number(req.query.date));
   try {
-    const data = await weeklyScheduleHandler.findWeeklySchedule(date);
-    if (data) {
+    const data = await weeklyScheduleHandler.findWeeklyByDate(date);
+    if (data.length > 0) {
+      const schedule = prepareSchedule(data[0]);
       res.status(200).json({
         status: 'success',
-        data: data,
+        data: schedule,
       });
     } else {
       res.status(204).json({
