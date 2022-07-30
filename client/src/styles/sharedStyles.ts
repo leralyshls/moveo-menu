@@ -43,12 +43,13 @@ export const StyledPageContainer = styled.div`
 
 export const StyledAdminPageContainer = styled.div`
   ${FlexColumn};
-  width: 100%;
+  max-width: 32rem;
   align-items: center;
   padding: 1.5rem 1rem;
   max-height: 55vh;
   overflow-y: auto;
   margin-bottom: 3.5;
+  margin: 0 auto;
 `;
 
 export const UnderscoredLinkMain = styled(Link)`

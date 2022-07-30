@@ -1,17 +1,7 @@
 import styled from 'styled-components';
 import { Paper } from '@mui/material';
-import { StyledUL, FlexRow } from '../../../styles/sharedStyles';
+import { FlexRow } from '../../../styles/sharedStyles';
 import COLORS from '../../../styles/colors';
-
-export const ScheduleUl = styled(StyledUL)`
-  padding: 0 0.5rem 0.5rem 0.5rem;
-
-  @media only screen and (min-width: 500px) {
-    align-items: center;
-    text-align: left;
-    padding: 1rem;
-  }
-`;
 
 export const FinishButtonsPaper = styled(Paper)`
   ${FlexRow};

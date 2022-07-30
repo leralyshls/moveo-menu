@@ -5,6 +5,7 @@ import Nav from '../../../components/nav/Nav';
 import TimePicker from '../../../components/timePicker/TimePicker';
 import VerticalStepper from './components/stepper/VerticalStepper';
 import AddNewScheduleSlot from './components/addNewScheduleSlot/AddNewScheduleSlot';
+import ScheduleList from './components/scheduleList/ScheduleList';
 import { DateInputType } from '../../../utilities/types/types';
 import { getAllTeams } from '../../../services/scheduleService';
 import { isDuplicateTeam } from '../../../utilities/isDuplicateTeam';
@@ -12,7 +13,6 @@ import { notify } from '../../../utilities/notifyWithToast';
 import {
   ApiResStatusEnum,
   MenuOrScheduleEnum,
-  TextDirEnum,
 } from '../../../utilities/types/enums';
 import { addMinutes } from 'date-fns';
 import { getTime } from '../../../utilities/dateHelpers';
@@ -25,9 +25,8 @@ import {
   FlexRowFull,
   StyledMainButton,
 } from '../../../styles/sharedStyles';
-import { ScheduleUl, FinishButtonsPaper } from './scheduleWeeklyCreate.styles';
+import { FinishButtonsPaper } from './scheduleWeeklyCreate.styles';
 import COLORS from '../../../styles/colors';
-import { ListContentWrapper } from '../menuEditPage/components/editableListItem/editableLi.styles';
 
 export interface IScheduleWeeklyCreate {
   location: MenuOrScheduleEnum;
@@ -37,8 +36,6 @@ export interface ITeamDuration {
   name: string;
   duration: string;
 }
-
-const scheduleTextDir = { isRTL: false, textDir: TextDirEnum.LTR };
 
 const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [isStepperVisible, setIsStepperVisible] = useState<boolean>(false);
@@ -147,22 +144,10 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
                   handleAddTimeSlot={handleAddTimeSlot}
                   handleAddTime={handleAddTime}
                 />
-                <ScheduleUl isRTLText={scheduleTextDir}>
-                  {teamsOrder.map((item, index) => (
-                    <li key={item.name}>
-                      <ListContentWrapper
-                        isRTLText={scheduleTextDir}
-                        style={{ justifyContent: 'space-between' }}
-                      >
-                        <Typography>
-                          {index + 1}. {item.name} - start at{' '}
-                          {timeStrings[index]} (their lunch is {item.duration}{' '}
-                          minutes)
-                        </Typography>
-                      </ListContentWrapper>
-                    </li>
-                  ))}
-                </ScheduleUl>
+                <ScheduleList
+                  teamsOrder={teamsOrder}
+                  timeStrings={timeStrings}
+                />
               </>
             )}
             {teamsQuery.status === ApiResStatusEnum.ERROR && (

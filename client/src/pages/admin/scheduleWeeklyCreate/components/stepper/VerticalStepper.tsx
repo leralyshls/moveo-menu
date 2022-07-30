@@ -101,7 +101,11 @@ const VerticalStepper = ({
           </Step>
         ))}
       </Stepper>
-      <StyledMainButton variant='contained' onClick={handleFinish}>
+      <StyledMainButton
+        variant='contained'
+        onClick={handleFinish}
+        disabled={activeStep !== 2}
+      >
         Finish
       </StyledMainButton>
     </Box>
