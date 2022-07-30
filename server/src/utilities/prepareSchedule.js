@@ -1,17 +1,17 @@
 import { addMinutes, getHours, getMinutes } from 'date-fns';
 
 export const getTime = (date) => {
-  const hours = getHours(date);
+  let hours = getHours(date);
   let minutes = getMinutes(date).toString();
   if (minutes.length < 2) {
     minutes = '0' + minutes;
   }
-  return `${hours}:${minutes}`;
+  return `${hours + 3}:${minutes}`;
 };
 
 const prepareTimes = (scheduleArr) => {
   return scheduleArr.map((item) => ({
-    time: getTime(new Date(item.time)),
+    time: getTime(item.time),
     name: item.name,
     duration: item.duration,
   }));
