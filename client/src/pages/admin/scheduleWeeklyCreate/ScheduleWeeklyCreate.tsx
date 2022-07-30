@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import Nav from '../../../components/nav/Nav';
 import TimePicker from '../../../components/timePicker/TimePicker';
@@ -49,7 +50,9 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
   const [teamsOrder, setTeamsOrder] = useState<ITeamDuration[]>([]);
   const [scheduleTimes, setScheduleTimes] = useState<Date[]>([]);
   const [timeStrings, setTimeStrings] = useState<string[]>([]);
+
   const teamsQuery = useQuery('teams', getAllTeams);
+  const navigate = useNavigate();
 
   const handleTimeDateChange = (newValue: DateInputType) => {
     if (scheduleTimes.length === 0 && newValue) {
@@ -105,6 +108,7 @@ const ScheduleWeeklyCreate = ({ location }: IScheduleWeeklyCreate) => {
       try {
         const res = await postWeeklySchedule(params);
         notify.success('The schedule was saved successfully');
+        navigate('/admin');
       } catch (e) {
         notify.error('Oops, something went wrong');
       }

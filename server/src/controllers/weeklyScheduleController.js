@@ -8,16 +8,6 @@ const requestAddOrUpdateSchedule = async (req, res) => {
     orderTeams: req.body.orderTeams,
     isoDate,
   };
-  // try {
-  //   await weeklyScheduleHandler.createNewWeekly(weeklyScheduleData);
-  //   res.status(200).json({
-  //     status: 'success',
-  //   });
-  // } catch (err) {
-  //   res.status(400).json({
-  //     status: 'fail',
-  //   });
-  // }
   try {
     const isUpdated = await weeklyScheduleHandler.findWeeklyByIsoAndUpdate(
       weeklyScheduleData
