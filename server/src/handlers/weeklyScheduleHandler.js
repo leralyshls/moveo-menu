@@ -1,7 +1,6 @@
 import { WeeklySchedule } from '../models/weeklyScheduleModel.js';
 
 const createNewWeekly = (scheduleData) => {
-  console.log(scheduleData);
   return WeeklySchedule.create(scheduleData);
 };
 
@@ -9,8 +8,9 @@ const findWeeklyByIsoAndUpdate = (data) => {
   return WeeklySchedule.findOneAndUpdate({ isoDate: data.isoDate }, data);
 };
 
-const findWeeklyByIsoDate = (isoDate) => {
-  return WeeklySchedule.findOne({ isoDate }).exec();
+const findWeeklyByDate = (date) => {
+  return WeeklySchedule.where('startTime').lte(date).sort('startTime').limit(1);
+  // return WeeklySchedule.find({ isoDate: isoDate }).exec();
 };
 
 const deleteWeeklyByIso = (isoDate) => {
@@ -19,7 +19,7 @@ const deleteWeeklyByIso = (isoDate) => {
 
 const weeklyScheduleHandler = {
   createNewWeekly,
-  findWeeklyByIsoDate,
+  findWeeklyByDate,
   findWeeklyByIsoAndUpdate,
   deleteWeeklyByIso,
 };

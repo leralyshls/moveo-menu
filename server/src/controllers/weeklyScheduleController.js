@@ -25,31 +25,31 @@ const requestAddOrUpdateSchedule = async (req, res) => {
   }
 };
 
-// const requestFindWeeklySchedule = async (req, res) => {
-//   const date = new Date(req.query.date);
-//   try {
-//     const data = await weeklyScheduleHandler.findWeeklySchedule(date);
-//     if (data) {
-//       res.status(200).json({
-//         status: 'success',
-//         data: data,
-//       });
-//     } else {
-//       res.status(204).json({
-//         status: 'success',
-//         msg: 'no data',
-//       });
-//     }
-//   } catch (err) {
-//     res.status(400).json({
-//       status: 'fail',
-//     });
-//   }
-// };
+const requestFindWeeklySchedule = async (req, res) => {
+  const date = new Date(req.query.date);
+  try {
+    const data = await weeklyScheduleHandler.findWeeklyByDate(date);
+    if (data) {
+      res.status(200).json({
+        status: 'success',
+        data: data,
+      });
+    } else {
+      res.status(204).json({
+        status: 'success',
+        msg: 'no data',
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+    });
+  }
+};
 
 const weeklyScheduleController = {
   requestAddOrUpdateSchedule,
-  // requestFindWeeklySchedule,
+  requestFindWeeklySchedule,
 };
 
 export default weeklyScheduleController;

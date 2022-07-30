@@ -39,9 +39,6 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  const weekStart = startOfWeek(day);
-  const ISOWeekStart = formatToISO(weekStart);
-
   // get menu for today in the morning, for tomorrow in the evening, on the weekend - the menu for sunday
   useEffect(() => {
     const sunday = nextSunday(day);
@@ -50,7 +47,6 @@ const HomePage = () => {
 
     if (isWeekend(day) || (hour >= 15 && isWeekend(tomorrow))) {
       setDay(sunday);
-      console.log(day);
       setISODay(formatToISO(sunday));
     } else if (hour >= 15 && !isWeekend(tomorrow)) {
       setDay(tomorrow);
@@ -60,9 +56,10 @@ const HomePage = () => {
   }, []);
 
   const menuQuery = useQuery(['menu', ISODay], () => getMenuForADay(ISODay));
-  const scheduleQuery = useQuery(['schedule', ISOWeekStart], () =>
-    getWeeklySchedule(ISOWeekStart)
+  const scheduleQuery = useQuery(['schedule', ISODay], () =>
+    getWeeklySchedule(ISODay)
   );
+  console.log(scheduleQuery);
 
   const handleAdminEnter = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
@@ -95,7 +92,7 @@ const HomePage = () => {
           >
             {MenuOrScheduleEnum.SCHEDULE}
           </UppercasedTypography>
-          {scheduleQuery.data === ErrorVariantsEnum.NO_SCHEDULE ? (
+          {/* {scheduleQuery.data === ErrorVariantsEnum.NO_SCHEDULE ? (
             <CenteredTypography sx={{ my: 1.5 }}>
               The schedule was not posted
             </CenteredTypography>
@@ -109,7 +106,7 @@ const HomePage = () => {
                 )
               )}
             </StyledCardUl>
-          )}
+          )} */}
         </StyledCard>
 
         <StyledCard id={MenuOrScheduleEnum.MENU}>

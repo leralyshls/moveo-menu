@@ -13,7 +13,6 @@ export const postWeeklySchedule = async ({
   startTime,
   orderTeams,
 }: WeeklyScheduleParams) => {
-  console.log(startTime, orderTeams);
   const res = await axios.post('/schedule', { startTime, orderTeams });
   if (res.status === 200) {
     return res.data;
