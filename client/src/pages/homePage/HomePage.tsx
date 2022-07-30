@@ -44,17 +44,17 @@ const HomePage = () => {
 
   // get menu for today in the morning, for tomorrow in the evening, on the weekend - the menu for sunday
   useEffect(() => {
-    if (isWeekend(day)) {
-      const sunday = nextSunday(day);
+    const sunday = nextSunday(day);
+    const hour = getHours(day);
+    const tomorrow = addDays(day, 1);
+
+    if (isWeekend(day) || (hour >= 15 && isWeekend(tomorrow))) {
       setDay(sunday);
+      console.log(day);
       setISODay(formatToISO(sunday));
-    } else {
-      const hour = getHours(day);
-      if (hour >= 15) {
-        const tomorrow = addDays(day, 1);
-        setDay(tomorrow);
-        setISODay(formatToISO(tomorrow));
-      }
+    } else if (hour >= 15 && !isWeekend(tomorrow)) {
+      setDay(tomorrow);
+      setISODay(formatToISO(tomorrow));
     }
     // eslint-disable-next-line
   }, []);

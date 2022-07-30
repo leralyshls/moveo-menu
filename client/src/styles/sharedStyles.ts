@@ -46,7 +46,7 @@ export const StyledAdminPageContainer = styled.div`
   width: 100%;
   align-items: center;
   padding: 1.5rem 1rem;
-  max-height: 50vh;
+  max-height: 55vh;
   overflow-y: auto;
   margin-bottom: 3.5;
 `;
